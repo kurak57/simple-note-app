@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Notes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        .note {
+            margin-bottom: 5px;
+        }
+        .note button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .note button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <h2>My Notes</h2>
+    <textarea id="noteContent" placeholder="Write your note here..."></textarea>
+    <button onclick="saveNote()">Save Note</button>
+    <div id="notesList"></div>
+
+    <script>
+        // Function to save a note to local storage
+        function saveNote() {
+            var noteContent = document.getElementById("noteContent").value;
+            if (noteContent.trim() !== "") {
+                var notesList = JSON.parse(localStorage.getItem("notes")) || [];
+                notesList.push(noteContent);
+                localStorage.setItem("notes", JSON.stringify(notesList));
+                displayNotes();
+                document.getElementById("noteContent").value = "";
+            } else {
+                alert("Please write something before saving!");
+            }
+        }
+
+        // Function to delete a note
+        function deleteNote(index) {
+            var notesList = JSON.parse(localStorage.getItem("notes")) || [];
+            notesList.splice(index, 1);
+            localStorage.setItem("notes", JSON.stringify(notesList));
+            displayNotes();
+        }
+
+        // Function to display saved notes
+        function displayNotes() {
+            var notesList = JSON.parse(localStorage.getItem("notes")) || [];
+            var notesListContainer = document.getElementById("notesList");
+            notesListContainer.innerHTML = "";
+            notesList.forEach(function(note, index) {
+                var noteElement = document.createElement("div");
+                noteElement.classList.add("note");
+                noteElement.textContent = note;
+                var deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function() {
+                    deleteNote(index);
+                };
+                noteElement.appendChild(deleteButton);
+                notesListContainer.appendChild(noteElement);
+            });
+        }
+
+        // Display notes when the page loads
+        window.onload = function() {
+            displayNotes();
+        };
+    </script>
+</body>
+</html>
